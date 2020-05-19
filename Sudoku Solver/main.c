@@ -12,17 +12,17 @@
 
 
 int sudokuRepresentation[9][9] = {
-    {5, 3, 0, 0, 7, 0, 0, 0, 0},
-    {6, 0, 0, 1, 9, 5, 0, 0, 0},
-    {0, 9, 8, 0, 0, 0, 0, 6, 0},
-    
-    {8, 0, 0, 0, 6, 0, 0, 0, 3},
-    {4, 0, 0, 8, 0, 3, 0, 0, 1},
-    {7, 0, 0, 0, 2, 0, 0, 0, 6},
-    
-    {0, 6, 0, 0, 0, 0, 2, 8, 0},
-    {0, 0, 0, 4, 1, 9, 0, 0, 5},
-    {0, 0, 0, 0, 8, 0, 0, 7, 9}
+    {5, 3, 0,   0, 7, 0,   0, 0, 0},
+    {6, 0, 0,   1, 9, 5,   0, 0, 0},
+    {0, 9, 8,   0, 0, 0,   0, 6, 0},
+
+    {8, 0, 0,   0, 6, 0,   0, 0, 3},
+    {4, 0, 0,   8, 0, 3,   0, 0, 1},
+    {7, 0, 0,   0, 2, 0,   0, 0, 6},
+
+    {0, 6, 0,   0, 0, 0,   2, 8, 0},
+    {0, 0, 0,   4, 1, 9,   0, 0, 5},
+    {0, 0, 0,   0, 8, 0,   0, 7, 9}
 };
 
 
@@ -57,7 +57,6 @@ bool isPossible(int row, int column, int number) {
                 return false;
             }
         }
-        printf("\n");
     }
     
     return true;
@@ -69,19 +68,21 @@ int main(int argc, const char * argv[]) {
     printSudoku();
     int row = 4;
     int column = 4;
-    printf(isPossible(row, column, 4) ? "true\n" : "false\n");
-    printf(isPossible(row, column, 5) ? "true\n" : "false\n");
-    printf(isPossible(row, column, 6) ? "true\n" : "false\n");
-    printf(isPossible(4, 1, 5) ? "true\n" : "false\n");
+//    printf(isPossible(row, column, 4) ? "true\n" : "false\n");
+//    printf(isPossible(row, column, 5) ? "true\n" : "false\n");
+//    printf(isPossible(row, column, 6) ? "true\n" : "false\n");
+//    printf(isPossible(4, 1, 5) ? "true\n" : "false\n");
+    
+    int tries = 0;
+    bool solved = false;
+    
+    while(!solved) {
+        solved = true;
+        tries++;
         
-    for(int n = 0; n < 10; n++) {
         for(int row = 0; row < 9; row++) {
             for(int column = 0; column < 9; column++) {
                 int acc = 0, lastNum = -1;
-                
-                if(row == 4 && column == 1) {
-                    
-                }
                 
                 for(int number = 1; number < 10; number++) {
                     if(isPossible(row, column, number)) {
@@ -92,13 +93,17 @@ int main(int argc, const char * argv[]) {
                 
                 if(acc == 1) {
                     sudokuRepresentation[row][column] = lastNum;
-                    printSudoku();
+                }
+                
+                if (sudokuRepresentation[row][column] == 0) {
+                    solved = false;
                 }
             }
         }
-        printSudoku();
     }
-
+    
+    printf("tries: %d\n", tries);
+    printSudoku();
     
     printf("\n");
     return 0;
