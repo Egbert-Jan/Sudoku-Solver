@@ -9,7 +9,22 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
+#include <time.h>
 
+
+//int sudokuRepresentation[9][9] = {
+//    {5, 3, 0,   0, 7, 0,   0, 0, 0},
+//    {6, 0, 0,   1, 9, 5,   0, 0, 0},
+//    {0, 9, 8,   0, 0, 0,   0, 6, 0},
+//
+//    {8, 0, 0,   0, 6, 0,   0, 0, 3},
+//    {4, 0, 0,   8, 0, 3,   0, 0, 1},
+//    {7, 0, 0,   0, 2, 0,   0, 0, 6},
+//
+//    {0, 6, 0,   0, 0, 0,   2, 8, 0},
+//    {0, 0, 0,   4, 1, 9,   0, 0, 5},
+//    {0, 0, 0,   0, 8, 0,   0, 7, 9}
+//};
 
 int sudokuRepresentation[9][9] = {
     {5, 3, 0,   0, 7, 0,   0, 0, 0},
@@ -22,9 +37,36 @@ int sudokuRepresentation[9][9] = {
 
     {0, 6, 0,   0, 0, 0,   2, 8, 0},
     {0, 0, 0,   4, 1, 9,   0, 0, 5},
-    {0, 0, 0,   0, 8, 0,   0, 7, 9}
+    {0, 0, 0,   0, 8, 0,   0, 0, 0}
 };
 
+//int sudokuRepresentation[9][9] = {
+//    {0, 5, 0,   7, 6, 0,   0, 0, 9},
+//    {0, 2, 0,   0, 0, 0,   0, 0, 0},
+//    {0, 0, 7,   9, 0, 0,   5, 0, 0},
+//
+//    {0, 1, 0,   0, 0, 2,   0, 0, 0},
+//    {6, 0, 0,   0, 0, 1,   0, 0, 7},
+//    {8, 7, 0,   5, 0, 0,   0, 0, 3},
+//
+//    {0, 0, 0,   3, 0, 0,   0, 4, 0},
+//    {4, 0, 0,   0, 5, 0,   8, 0, 0},
+//    {0, 0, 0,   0, 0, 0,   0, 0, 6},
+//};
+
+//int sudokuRepresentation[9][9] = {
+//    {3, 0, 0, 5, 0, 0, 0, 9, 0},
+//    {9, 0, 0, 4, 0, 3, 0, 0, 2},
+//    {5, 0, 0, 9, 8, 2, 7, 0, 0},
+//
+//    {0, 0, 3, 6, 2, 4, 0, 0, 5},
+//    {0, 0, 6, 1, 5, 9, 3, 0, 0},
+//    {1, 5, 0, 7, 3, 8, 0, 0, 0},
+//
+//    {0, 0, 5, 8, 9, 0, 0, 0, 0},
+//    {8, 0, 0, 3, 4, 7, 0, 0, 6},
+//    {0, 3, 0, 2, 0, 5, 0, 0, 4},
+//};
 
 void printSudoku() {
     for(int r = 0; r < 9; r++) {
@@ -37,12 +79,10 @@ void printSudoku() {
 }
 
 
-bool isPossible(int row, int column, int number) {
+bool isPossibleFor(int row, int column, int number) {
     int x = floor(row / 3) * 3;
     int y = floor(column / 3) * 3;
     
-    if (sudokuRepresentation[row][column] != 0) { return false; }
-        
     //Check row of x pos and column of y pos
     for(int n = 0; n < 9; n++) {
         if(sudokuRepresentation[row][n] == number || sudokuRepresentation[n][column] == number) {
@@ -62,49 +102,36 @@ bool isPossible(int row, int column, int number) {
     return true;
 }
 
+int counter = 0;
 
-
-int main(int argc, const char * argv[]) {
-    printSudoku();
-    int row = 4;
-    int column = 4;
-//    printf(isPossible(row, column, 4) ? "true\n" : "false\n");
-//    printf(isPossible(row, column, 5) ? "true\n" : "false\n");
-//    printf(isPossible(row, column, 6) ? "true\n" : "false\n");
-//    printf(isPossible(4, 1, 5) ? "true\n" : "false\n");
-    
-    int tries = 0;
-    bool solved = false;
-    
-    while(!solved) {
-        solved = true;
-        tries++;
-        
-        for(int row = 0; row < 9; row++) {
-            for(int column = 0; column < 9; column++) {
-                int acc = 0, lastNum = -1;
-                
-                for(int number = 1; number < 10; number++) {
-                    if(isPossible(row, column, number)) {
-                        acc++;
-                        lastNum = number;
+bool solve() {
+    counter++;
+    for(int row = 0; row < 9; row++) {
+        for(int column = 0; column < 9; column++) {
+            if(sudokuRepresentation[row][column] > 0) { continue; }
+            printSudoku();
+            for(int number = 1; number < 10; number++) {
+                if (isPossibleFor(row, column, number)) {
+                    sudokuRepresentation[row][column] = number;
+                    if(solve()) {
+                        return true;
                     }
-                }
-                
-                if(acc == 1) {
-                    sudokuRepresentation[row][column] = lastNum;
-                }
-                
-                if (sudokuRepresentation[row][column] == 0) {
-                    solved = false;
+                    sudokuRepresentation[row][column] = 0;
                 }
             }
+            return false;
         }
     }
     
-    printf("tries: %d\n", tries);
-    printSudoku();
     
+    return true;
+}
+
+int main(int argc, const char * argv[]) {
+
+    solve();
+    printf("%d", counter);
+
     printf("\n");
     return 0;
 }
